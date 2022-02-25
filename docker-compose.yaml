@@ -26,5 +26,8 @@ services:
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_HOST=${DATABASE_HOST}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - SECRET_KEY=${SECRET_KEY}
+      - APPENGINE_URL=${APPENGINE_URL}
+      - DEBUG=${DEBUG}
     depends_on:
       - db

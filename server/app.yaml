@@ -1,4 +1,4 @@
-runtime: python37
+runtime: python39
 
 handlers:
 - url: /static
@@ -7,8 +7,9 @@ handlers:
   script: auto
 
 env_variables:
-  POSTGRESQL_CONNECTION_NAME: project:region:db
-  POSTGRES_DB: [DB NAME]
-  POSTGRES_PASSWORD: [DB PASSWORD]
-  POSTGRES_USER: [DB USER]
-  POSTGRES_HOST: [DB HOST]
+  APPENGINE_URL: https://django-app-340805.uc.r.appspot.com
+  # POSTGRESQL_CONNECTION_NAME: project:region:db
+  # POSTGRES_DB: [DB NAME]
+  # POSTGRES_PASSWORD: [DB PASSWORD]
+  # POSTGRES_USER: [DB USER]
+  # POSTGRES_HOST: [DB HOST]

@@ -11,23 +11,38 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-
+from urllib.parse import urlparse
 from datetime import timedelta
+from google.cloud import secretmanager
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
+if os.environ.get('GOOGLE_CLOUD_PROJECT', None):
+    # Pull secrets from Secret Manager
+    project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
+    client = secretmanager.SecretManagerServiceClient()
+    for keyName in ['DATABASE_HOST', 'DATABASE_NAME', 'DATABASE_USER', 'DATABASE_PASSWORD', 'SECRET_KEY']:
+        name = f'projects/{project_id}/secrets/{keyName}/versions/latest'
+        payload = client.access_secret_version(name=name).payload.data.decode('UTF-8')
+        os.environ[keyName] = payload
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^fs4x$1t=ivv%)^s=09(@e0@o%=rg=fcx4v*$)p73flicxuvtj'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', False)
 
-ALLOWED_HOSTS = []
+APPENGINE_URL = os.environ.get('APPENGINE_URL', default=None)
+if APPENGINE_URL:
+    # print(APPENGINE_URL)
+    # APPENGINE_URL = urlparse(APPENGINE_URL).geturl()
+    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc]
+    CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
+    SECURE_SSL_REDIRECT = True
+else:
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -83,19 +98,13 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
+        'HOST': os.environ.get('DATABASE_HOST'),
         'NAME': os.environ.get('DATABASE_NAME'),
         'USER': os.environ.get('DATABASE_USER'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'HOST': os.environ.get('DATABASE_HOST'),
         'PORT': 5432
     }
 }
@@ -124,13 +133,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
@@ -141,10 +146,14 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8080'
 ]
 
+STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
+STATICFILES_DIRS = []
+
 
 # Custom user model
 AUTH_USER_MODEL = 'api.User'
+
 
 # Rest Framework
 REST_FRAMEWORK = {

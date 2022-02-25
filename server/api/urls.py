@@ -9,6 +9,7 @@ router.register(r'users', views.UserViewSet)
 router.register(r'campaigns', views.CampaignViewSet)
 router.register(r'characters', views.CharacterViewSet)
 
+app_name = 'api'
 urlpatterns = [
     path('', include(router.urls)),
     path('auth/', include('djoser.urls')),
