@@ -1,3 +1,5 @@
+from django.views import View
+from django.http import HttpResponse
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework import filters, generics, permissions, status, viewsets
 from rest_framework.response import Response
@@ -6,6 +8,11 @@ from rest_framework.views import APIView
 from . import models
 from . import serializers
 from . import utils
+
+
+class Test(View):
+    def get(self, request):
+        return HttpResponse('test page')
 
 
 class UserPermissions(permissions.BasePermission):
