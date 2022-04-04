@@ -18,5 +18,6 @@ urlpatterns = [
         'auth/jwt/destroy/',
         views.Logout.as_view(),
         name='auth_logout'
-    )
+    ),
+    path('test/', views.TestView.as_view())
 ]

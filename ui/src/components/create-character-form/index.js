@@ -43,7 +43,6 @@ export function CreateCharacterForm({
       const lastOrder = characters.map(c => c.order).reduce((previous, current) => {
         return Math.max(previous, current)
       }, -1)
-      console.log(lastOrder)
       await dispatch(characterActions.createCharacter({
         campaign: campaignId,
         order: Number(lastOrder) + 1,
