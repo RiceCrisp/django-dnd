@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-const baseURL = 'http://127.0.0.1:8000/api/'
+import { env } from '~/env'
 
 const axiosInstance = axios.create({
-  baseURL,
+  baseURL: env.apiUrl,
   timeout: 5000,
   headers: {
     Authorization: localStorage.getItem('access_token') ? `JWT ${localStorage.getItem('access_token')}` : '',
@@ -21,7 +21,7 @@ axiosInstance.interceptors.response.use(
     // Prevent infinite loops early
     // if (
     //   error.response.status === 401 &&
-    //   originalRequest.url === baseURL + '/auth/jwt/refresh'
+    //   originalRequest.url === env.apiUrl + '/auth/jwt/refresh'
     // ) {
     //   window.location.href = '/login/'
     //   return Promise.reject(error)
