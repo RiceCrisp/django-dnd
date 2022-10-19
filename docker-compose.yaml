@@ -6,9 +6,9 @@ services:
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
-      - DATABASE_NAME=postgres
-      - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
 
@@ -16,18 +16,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: "./server"
-    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./server:/code
     ports:
       - "8000:8000"
-    environment:
-      - DATABASE_NAME=${DATABASE_NAME}
-      - DATABASE_USER=${DATABASE_USER}
-      - DATABASE_HOST=${DATABASE_HOST}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - SECRET_KEY=${SECRET_KEY}
-      - APPENGINE_URL=${APPENGINE_URL}
-      - DEBUG=${DEBUG}
+    env_file:
+      - .env
     depends_on:
       - db

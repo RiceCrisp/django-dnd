@@ -11,38 +11,34 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import sys
 from urllib.parse import urlparse
 from datetime import timedelta
-from google.cloud import secretmanager
+from django.core.management.utils import get_random_secret_key
 
+
+SITE_NAME = os.environ.get('SITE_NAME', 'Django App')
+UI_HOST = os.environ.get('UI_HOST', 'http://localhost:3000')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-if os.environ.get('GOOGLE_CLOUD_PROJECT', None):
-    # Pull secrets from Secret Manager
-    project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
-    client = secretmanager.SecretManagerServiceClient()
-    for keyName in ['DATABASE_HOST', 'DATABASE_NAME', 'DATABASE_USER', 'DATABASE_PASSWORD', 'SECRET_KEY']:
-        name = f'projects/{project_id}/secrets/{keyName}/versions/latest'
-        payload = client.access_secret_version(name=name).payload.data.decode('UTF-8')
-        os.environ[keyName] = payload
+# BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = int(os.environ.get('DEBUG', False))
 
-APPENGINE_URL = os.environ.get('APPENGINE_URL', default=None)
-if APPENGINE_URL:
-    # print(APPENGINE_URL)
-    # APPENGINE_URL = urlparse(APPENGINE_URL).geturl()
-    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc]
-    CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
-    SECURE_SSL_REDIRECT = True
-else:
-    ALLOWED_HOSTS = ['*']
+# APPENGINE_URL = os.environ.get('APPENGINE_URL', default=None)
+# if APPENGINE_URL:
+#     # print(APPENGINE_URL)
+#     # APPENGINE_URL = urlparse(APPENGINE_URL).geturl()
+#     ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc]
+#     CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
+#     SECURE_SSL_REDIRECT = True
+# else:
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -60,7 +56,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'api'
+    'api',
+    'email'
 ]
 
 MIDDLEWARE = [
@@ -98,16 +95,18 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': os.environ.get('DATABASE_HOST'),
-        'NAME': os.environ.get('DATABASE_NAME'),
-        'USER': os.environ.get('DATABASE_USER'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'PORT': 5432
+if len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'HOST': os.environ.get('DATABASE_HOST'),
+            'NAME': os.environ.get('DATABASE_NAME'),
+            'USER': os.environ.get('DATABASE_USER'),
+            'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+            'PORT': os.environ.get('DATABASE_PORT')
+        }
     }
-}
+
 
 
 # Password validation
@@ -143,12 +142,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:8080'
+    'http://localhost:3000'
 ]
 
-STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
-STATICFILES_DIRS = []
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 
 # Custom user model
@@ -193,11 +192,17 @@ SIMPLE_JWT = {
 
 DJOSER = {
     # 'LOGIN_FIELD': 'email',
+    'SEND_ACTIVATION_EMAIL': True,
+    'ACTIVATION_URL': 'activate/?u={uid}&t={token}',
     'PASSWORD_RESET_CONFIRM_URL': 'reset-password/?u={uid}&t={token}',
     # 'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
     'TOKEN_MODEL': None,
     'SERIALIZERS': {
         # 'user': 'api.serializers.FullUser',
         'current_user': 'api.serializers.FullUser'
+    },
+    'EMAIL': {
+        'activation': 'api.email.ActivationEmail',
+        'password_reset': 'api.email.PasswordResetEmail'
     }
 }
