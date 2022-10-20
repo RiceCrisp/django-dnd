@@ -17,6 +17,7 @@ from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
 import mimetypes
 
+mimetypes.add_type('text/html', '.html', True)
 mimetypes.add_type('text/css', '.css', True)
 
 SITE_NAME = os.environ.get('SITE_NAME', 'Django App')
