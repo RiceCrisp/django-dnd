@@ -15,7 +15,9 @@ import sys
 from urllib.parse import urlparse
 from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
+import mimetypes
 
+mimetypes.add_type('text/css', '.css', True)
 
 SITE_NAME = os.environ.get('SITE_NAME', 'Django App')
 UI_HOST = os.environ.get('UI_HOST', 'http://localhost:3000')
