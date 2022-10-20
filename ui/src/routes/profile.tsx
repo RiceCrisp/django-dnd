@@ -24,7 +24,7 @@ function Element() {
     firstName: '',
     lastName: ''
   })
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [loading, setLoading] = useState(false)
 
   const {
@@ -51,7 +51,7 @@ function Element() {
       await dispatch(actions.updateUser(fields))
     }
     catch (err) {
-      const error = err as Record<string, string>
+      const error = err as Record<string, string[]>
       setErrors(error)
     }
     finally {
@@ -80,9 +80,7 @@ function Element() {
           onSubmit={ handleUserUpdateSubmit }
         >
           <VStack spacing="5">
-            <FormControl
-              errors={ errors.username }
-            >
+            <FormControl errors={ errors.username }>
               <FormLabel htmlFor="username">Username</FormLabel>
               <Input
                 id="username"
@@ -91,7 +89,7 @@ function Element() {
                 readOnly
               />
             </FormControl>
-            <FormControl>
+            <FormControl errors={ errors.email }>
               <FormLabel htmlFor="email">Email</FormLabel>
               <Input
                 id="email"
@@ -100,7 +98,7 @@ function Element() {
                 readOnly
               />
             </FormControl>
-            <FormControl>
+            <FormControl errors={ errors.first_name }>
               <FormLabel htmlFor="firstName">First Name</FormLabel>
               <Input
                 id="firstName"
@@ -109,7 +107,7 @@ function Element() {
                 value={ fields.firstName }
               />
             </FormControl>
-            <FormControl>
+            <FormControl errors={ errors.last_name }>
               <FormLabel htmlFor="lastName">Last Name</FormLabel>
               <Input
                 id="lastName"

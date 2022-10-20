@@ -8,7 +8,7 @@ import {
 import React from 'react'
 
 export interface FormControlProps extends ChakraFormControlProps {
-  errors?: string
+  errors?: string[]
 }
 
 export function FormControl({

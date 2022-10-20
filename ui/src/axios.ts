@@ -15,7 +15,6 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log(error.response.data)
     const originalRequest = error.config
 
     // Prevent infinite loops early

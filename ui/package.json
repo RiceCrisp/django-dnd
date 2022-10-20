@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "build": "npm run compile && vite build",
+    "compile": "tsc --noEmit",
+    "compile:watch": "npm run compile -- --watch",
     "format": "eslint --fix .",
     "lint": "eslint .",
-    "start": "vite --host --port=3000",
+    "serve": "vite --host --port=3000",
+    "start": "run-p compile:watch serve",
     "test": "run-s test:component test:e2e",
     "test:component": "cypress run --component",
     "test:e2e": "cypress run"

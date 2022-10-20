@@ -17,7 +17,7 @@ export function CreateCampaignForm({
   onSuccess,
   ...props
 }: CreateCampaignFormProps) {
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [name, setName] = useState('')
 
   const dispatch = useAppDispatch()
@@ -32,7 +32,7 @@ export function CreateCampaignForm({
       onSuccess()
     }
     catch (err) {
-      const error = err as Record<string, string>
+      const error = err as Record<string, string[]>
       setErrors(error)
     }
   }

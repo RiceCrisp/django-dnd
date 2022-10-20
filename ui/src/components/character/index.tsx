@@ -18,7 +18,7 @@ import { TCharacter } from '~/types'
 
 export interface CharacterProps {
   value: TCharacter
-  errors?: Record<string, string>
+  errors?: Record<string, string[]>
   onChange: (arg: TCharacter) => void
   onSubmit?: (arg: TCharacter) => void
 }
@@ -66,9 +66,7 @@ export function Character({
       { ...props }
     >
       <VStack spacing="5">
-        <FormControl
-          errors={ errors.name }
-        >
+        <FormControl errors={ errors.name }>
           <FormLabel htmlFor={ `character-name-${id}` }>Name</FormLabel>
           <Input
             id={ `character-name-${id}` }
@@ -82,9 +80,7 @@ export function Character({
           spacing="4"
           alignItems="flex-end"
         >
-          <FormControl
-            errors={ errors.hp }
-          >
+          <FormControl errors={ errors.hp }>
             <FormLabel htmlFor={ `character-hp-${id}` }>HP</FormLabel>
             <NumberInput
               id={ `character-hp-${id}` }
@@ -92,9 +88,7 @@ export function Character({
               value={ character.hp }
             />
           </FormControl>
-          <FormControl
-            errors={ errors.maxHp }
-          >
+          <FormControl errors={ errors.maxHp }>
             <FormLabel htmlFor={ `character-max-hp-${id}` }>HP</FormLabel>
             <NumberInput
               id={ `character-max-hp-${id}` }
@@ -103,9 +97,7 @@ export function Character({
             />
           </FormControl>
         </SimpleGrid>
-        <FormControl
-          errors={ errors.race }
-        >
+        <FormControl errors={ errors.race }>
           <FormLabel htmlFor={ `character-race-${id}` }>Race</FormLabel>
           <Select
             id={ `character-race-${id}` }
@@ -124,9 +116,7 @@ export function Character({
             }) }
           </Select>
         </FormControl>
-        <FormControl
-          errors={ errors._class }
-        >
+        <FormControl errors={ errors._class }>
           <FormLabel htmlFor={ `character-class-${id}` }>Class</FormLabel>
           <Select
             id={ `character-class-${id}` }

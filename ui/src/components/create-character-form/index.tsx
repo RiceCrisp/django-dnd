@@ -27,7 +27,7 @@ export function CreateCharacterForm({
   const { abilities, abilityList } = useAbilities()
   const { skills, skillList } = useSkills()
 
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [character, setCharacter] = useState({
     name: '',
     _class: '',
@@ -56,7 +56,7 @@ export function CreateCharacterForm({
       onSuccess()
     }
     catch (err) {
-      const error = err as Record<string, string>
+      const error = err as Record<string, string[]>
       setErrors(error)
     }
   }
@@ -70,9 +70,7 @@ export function CreateCharacterForm({
       { ...props }
     >
       <VStack spacing="5">
-        <FormControl
-          errors={ errors.name }
-        >
+        <FormControl errors={ errors.name }>
           <FormLabel htmlFor="create-character-name">Name</FormLabel>
           <Input
             id="create-character-name"
@@ -82,9 +80,7 @@ export function CreateCharacterForm({
             required
           />
         </FormControl>
-        <FormControl
-          errors={ errors.race }
-        >
+        <FormControl errors={ errors.race }>
           <FormLabel htmlFor="create-character-race">Race</FormLabel>
           <Select
             id="create-character-race"
@@ -103,9 +99,7 @@ export function CreateCharacterForm({
             }) }
           </Select>
         </FormControl>
-        <FormControl
-          errors={ errors._class }
-        >
+        <FormControl errors={ errors._class }>
           <FormLabel htmlFor="create-character-class">Class</FormLabel>
           <Select
             id="create-character-class"

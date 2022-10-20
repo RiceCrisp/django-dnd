@@ -19,31 +19,30 @@ export interface SignUpFormProps extends ChakraProps {
   onSuccess: () => void
 }
 
-export function SignUpForm({
+export function ResetPasswordForm({
   onSuccess,
   ...props
 }: SignUpFormProps) {
-  const [email, setEmail] = useState('')
-  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [loading, setLoading] = useState(false)
 
-  const handleSignUpSubmit: React.FormEventHandler = async (e) => {
+  const handleResetPasswordConfirm: React.FormEventHandler = async (e) => {
     e.preventDefault()
-    if (loading === true) {
-      return
-    }
+    const params = new URLSearchParams(window.location.search)
     setLoading(true)
     setErrors({})
     try {
-      const response = await axiosInstance.post('/auth/users/', {
-        email,
-        username,
-        password,
-        re_password: password
-      })
-      if (response.status === 201) {
+      const response = await axiosInstance.post(
+        '/auth/users/reset_password_confirm/',
+        {
+          uid: params.get('u'),
+          token: params.get('t'),
+          new_password: password,
+          re_new_password: password
+        }
+      )
+      if (response.status === 204) {
         onSuccess()
       }
       else {
@@ -54,45 +53,28 @@ export function SignUpForm({
       const error = err as AxiosError
       setErrors(error.response?.data)
     }
-    setLoading(false)
+    finally {
+      setLoading(false)
+    }
   }
 
   return (
     <chakra.form
-      onSubmit={ handleSignUpSubmit }
-      { ...props }
+      layerStyle="card"
+      onSubmit={ handleResetPasswordConfirm }
+      {...props}
     >
       <VStack spacing="5">
-        { !!errors.detail && (
+        { (!!errors.uid || !!errors.token) && (
           <Alert status="error">
             <AlertIcon
               as={ MdError }
             />
-            { errors.detail }
+            Password reset link expired or invalid.
           </Alert>
         ) }
-        <FormControl errors={ errors.email }>
-          <FormLabel htmlFor="email">Email Address</FormLabel>
-          <Input
-            id="email"
-            type="email"
-            onChange={ (e) => setEmail(e.target.value) }
-            value={ email }
-            required
-          />
-        </FormControl>
-        <FormControl errors={ errors.username }>
-          <FormLabel htmlFor="username">User Name</FormLabel>
-          <Input
-            id="username"
-            type="text"
-            onChange={ (e) => setUsername(e.target.value) }
-            value={ username }
-            required
-          />
-        </FormControl>
-        <FormControl errors={ errors.password }>
-          <FormLabel htmlFor="password">Password</FormLabel>
+        <FormControl errors={ errors.new_password }>
+          <FormLabel htmlFor="password">New Password</FormLabel>
           <Input
             id="password"
             type="password"
@@ -105,8 +87,9 @@ export function SignUpForm({
           type="submit"
           isLoading={ loading }
           colorScheme="blue"
+          w="full"
         >
-          Create Account
+          Reset Password
         </Button>
       </VStack>
     </chakra.form>

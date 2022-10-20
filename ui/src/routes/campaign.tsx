@@ -81,7 +81,7 @@ function Element() {
     }))
   }
 
-  const sortedCharacters = [...characters].sort((a, b) => a.order - b.order)
+  const sortedCharacters = [...characters].sort((a, b) => (a.order || 0) - (b.order || 0))
 
   const navigationStatus = () => {
     if (campaignStatus === 'PENDING' || characterStatus === 'PENDING') {
@@ -121,9 +121,9 @@ function Element() {
                 collisionDetection={ closestCenter }
                 onDragEnd={ (e) => {
                   const { active, over } = e
-                  if (active.id !== over.id) {
+                  if (active.id !== over?.id) {
                     const oldIndex = sortedCharacters.findIndex((c) => c.id === active.id)
-                    const newIndex = sortedCharacters.findIndex((c) => c.id === over.id)
+                    const newIndex = sortedCharacters.findIndex((c) => c.id === over?.id)
                     onCharacterChange({ ...sortedCharacters[oldIndex], order: newIndex })
                     onCharacterChange({ ...sortedCharacters[newIndex], order: oldIndex })
                   }

@@ -23,7 +23,7 @@
   "plugins": ["react", "@typescript-eslint", "cypress"],
   "rules": {
     // allows you to prefix vars with _ to flag them as unused
-    "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "^_" }],
     // disabling default indent and enabling typescript indent prevents vscode bug
     "indent": "off",
     "@typescript-eslint/indent": ["error", 2],
@@ -33,6 +33,13 @@
       "functions": false,
       "typedefs": false
     }],
+    "camelcase": "off",
+    "@typescript-eslint/naming-convention": [
+      "error",
+      { "selector": "default", "format": ["camelCase", "PascalCase"], "leadingUnderscore": "allow" },
+      { "selector": "typeLike", "format": ["PascalCase"] },
+      { "selector": "memberLike", "format": null }
+    ],
     "space-before-function-paren": ["error", {
       "anonymous": "never",
       "named": "never",

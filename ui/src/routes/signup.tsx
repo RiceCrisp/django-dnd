@@ -27,7 +27,7 @@ function Element() {
       >
         Sign Up
       </Heading>
-      { !success
+      { success
         ? (
           <Alert
             status="info"
